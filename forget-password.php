@@ -92,7 +92,7 @@
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Email</label>
                       <div class="input-group has-validation">
-                        <input type="email" name="email" class="form-control" id="yourEmail" placeholder="example@gmail.com" required>
+                        <input type="email" name="mail" class="form-control" id="yourEmail" placeholder="example@gmail.com" required>
                         <div class="invalid-feedback">Please enter your email.</div>
                       </div>
                     </div>
