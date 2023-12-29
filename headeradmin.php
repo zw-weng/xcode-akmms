@@ -1,3 +1,7 @@
+<?php
+include('function.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -340,7 +344,7 @@
       </li><!-- End Customers Info Page Nav -->
 
         <li class="nav-item">
-        <a class="nav-link collapsed" href="userlist.php">
+        <a class="nav-link collapsed" href="user.php">
           <i class="bi bi-people"></i>
           <span>User Management</span>
         </a>
