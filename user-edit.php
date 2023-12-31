@@ -130,26 +130,12 @@ if ($stmt) {
                       </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>
-                    <?php 
-                    echo '<input type="email" name="femail" class="form-control" value="'.$row['user_email'].'" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" required>';
-                    ?>
-                  </div>
-                  
-                  <div class="form-group">
-                      <label for="exampleTextarea" class="form-label mt-4">Address</label>
-                      <textarea class="form-control" name="fadd" id="exampleTextarea" rows="3" required>
-                          <?php echo htmlspecialchars($row['user_address']); ?>
-                      </textarea>
-                  </div>
-
                   <div class="form-group row">
-                      <div class="col-md-6">
-                          <label for="fposition" class="form-label mt-4">Position</label>
-                          <?php
-                          echo '<input type="text" name="fposition" class="form-control" value="'.$row['user_position'].'" id="fposition" placeholder="" required>';
-                          ?>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>
+                        <?php 
+                        echo '<input type="email" name="femail" class="form-control" value="'.$row['user_email'].'" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" required>';
+                        ?>
                       </div>
 
                       <div class="col-md-6">
