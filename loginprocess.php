@@ -3,47 +3,49 @@ session_start();
 
 //Connect to DB
 include('dbconnect.php');
+include('function.php');
 
-//Retrieve data from login form
-$fid = $_POST['fid'];
-$fpwd = $_POST['fpwd'];
+if(isset($_POST['loginBtn'])){
+	$fid = validate($_POST['fid']);
+	$fpwd = validate($_POST['fpwd']);
 
-//CRUD Operations
-//RETRIEVE - SQL retrieve statement
-$sql = "SELECT * FROM tb_user WHERE user_id=?";
+	$fid = filter_var($fid, FILTER_SANITIZE_STRING);
+	$fpwd = filter_var($fpwd, FILTER_SANITIZE_STRING);
 
-// Use prepared statements to prevent SQL injection
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, "s", $fid);
-mysqli_stmt_execute($stmt);
+	if($fid != '' && $fpwd != ''){
+		$sql = "SELECT * FROM tb_user WHERE user_id='$fid' AND user_pwd='$fpwd' LIMIT 1";
+		$result = mysqli_query($con,$sql);
 
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
+		if($result){
+			if(mysqli_num_rows($result) == 1){
+				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$_SESSION['user_id']=session_id();
+				$_SESSION['suid']=$fid;
 
-// Check if user exists and password is correct
-if ($row && password_verify($fpwd, $row['user_pwd'])) {
-    $_SESSION['user_id'] = session_id();
-    $_SESSION['suid'] = $fid;
-
-    // User available
-    if ($row['type_id'] == '1') //Staff
-    {
-        $_SESSION['notification'] = 'Welcome, staff member!';
-        header('Location: staffmain.php');
-    } else {
-        $_SESSION['notification'] = 'Welcome, administrator!';
-        header('Location: adminmain.php');
-    }
-} else {
-    // Data not available/exist
-    // Add script to let the user know either username or pwd wrong
-    $_SESSION['error'] = 'Username or password is incorrect. Please try again.';
-    header('Location: login.php');
+				//User available
+				if($row['type_id'] == '1') //Staff
+				{
+					redirect('staffmain.php', 'Logged In Successfully');
+				}
+				else
+				{
+					redirect('adminmain.php', 'Logged In Successfully');
+				}	
+			}
+			else{
+				redirect('login.php', 'Invalid User ID or Password');
+			}
+		}
+		else{
+			redirect('login.php', 'Something went wrong');
+		}
+	}
+	else{
+		redirect('login.php', 'All fields are mandatory');
+	}
 }
 
-// Close the statement
-mysqli_stmt_close($stmt);
-
-// Close DB Connection
+//Close DB Conncetion
 mysqli_close($con);
+
 ?>
