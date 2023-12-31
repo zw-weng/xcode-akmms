@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
     $stmt = mysqli_prepare($con, $sql);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "i", $fid);
+        mysqli_stmt_bind_param($stmt, "s", $fid);
         mysqli_stmt_execute($stmt);
 
         $affectedRows = mysqli_stmt_affected_rows($stmt);
