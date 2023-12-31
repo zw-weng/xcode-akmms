@@ -78,13 +78,10 @@
                       <b>U</b>ser ID
                     </th>
                     <th>IC</th>
-                    <th>Password</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Phone No.</th>
                     <th>Email</th>
-                    <th>Address</th>
-                    <th>Position</th>
                     <th>User Type</th>
                   </tr>
                 </thead>
@@ -95,13 +92,10 @@
                       echo"<tr>";
                       echo"<td>".$row['user_id']."</td>";
                       echo"<td>".$row['user_ic']."</td>";
-                      echo"<td>".$row['user_pwd']."</td>";
                       echo"<td>".$row['u_fName']."</td>";
                       echo"<td>".$row['u_lName']."</td>";
                       echo"<td>".$row['user_phone']."</td>";
                       echo"<td>".$row['user_email']."</td>";
-                      echo"<td>".$row['user_address']."</td>";
-                      echo"<td>".$row['user_position']."</td>";
                       echo"<td>".$row['type_desc']."</td>";
                       echo"<td>";
                         echo '<div class="dropdown">
