@@ -1,5 +1,6 @@
 <?php
-// Connect to DB
+// Include neccessary files
+include('mysession.php');
 include('dbconnect.php');
 include('function.php');
 
@@ -20,12 +21,12 @@ if(isset($_POST['saveuser'])){
     $fpwd = validate($_POST['fpwd']);
     $fphone = validate($_POST['fphone']);
     $femail = validate($_POST['femail']);
-    $fadd = validate($_POST['fadd']);
-    $fposition = validate($_POST['fposition']);
     $ftype = validate($_POST['ftype']);
 
 
-    if($fid != '' && $fic != '' && $ffname != '' && $flname != '' && $fpwd != '' && $fphone != '' && $femail != '' && $fadd != '' && $fposition != '' && $ftype != ''){
+    if($fid != '' && $fic != '' && $ffname != '' && $flname != '' && $fpwd != '' && $fphone != '' && $femail != '' && $ftype != ''){
+        $hashedPassword = password_hash($fpwd, PASSWORD_BCRYPT);
+        
         $sql = "UPDATE tb_user SET
         user_ic = ?,
         user_pwd = ?,
@@ -33,15 +34,13 @@ if(isset($_POST['saveuser'])){
         u_lName = ?,
         user_phone = ?,
         user_email = ?,
-        user_address = ?,
-        user_position = ?,
         type_id = ?
         WHERE user_id = ?";
 
         $stmt = mysqli_prepare($con, $sql);
 
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "isssssssis", $fic, $fpwd, $ffname, $flname, $fphone, $femail, $fadd, $fposition, $ftype, $fid);
+            mysqli_stmt_bind_param($stmt, "issssssis", $fic, $hashedPassword, $ffname, $flname, $fphone, $femail, $ftype, $fid);
             mysqli_stmt_execute($stmt);
 
             $affectedRows = mysqli_stmt_affected_rows($stmt);
