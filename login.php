@@ -89,7 +89,7 @@ include('function.php');
 
                   <div class="pt-4 pb-2">
                     <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                    <p class="text-center small">Enter your username & password to login</p>
+                    <p class="text-center small">Enter your user ID & password to login</p>
                   </div>
 
                   <?= alertMessage(); ?>
@@ -97,7 +97,7 @@ include('function.php');
                   <form class="row g-3 needs-validation" method="post" action="loginprocess.php">
 
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Username</label>
+                      <label for="yourUsername" class="form-label">User ID</label>
                       <div class="input-group has-validation">
                         <input type="text" name="fid" class="form-control" id="yourUsername" placeholder="user ID" required>
                         <div class="invalid-feedback">Please enter your username.</div>
@@ -111,7 +111,7 @@ include('function.php');
                     </div>
 
                     <div class="col-12">
-                      <p class="small mb-0"><a href="forget-password.php">Forgot password</a></p>
+                      <p class="small mb-0"><a href="password-reset.php">Forgot password?</a></p>
                     </div>
 
                     <div class="col-12">
