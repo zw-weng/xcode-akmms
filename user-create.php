@@ -33,7 +33,7 @@ if ($stmt) {
     }
 
     // Display result
-    include 'headeradmin.php';
+    include ('headeradmin.php');
 } else {
     die("Prepare statement failed: " . mysqli_error($con));
 }
@@ -104,20 +104,10 @@ if ($stmt) {
                       </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>
-                    <input type="email" name="femail" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="exampleTextarea" class="form-label mt-4">Address</label>
-                    <textarea class="form-control" name="fadd" id="exampleTextarea" rows="3" required></textarea>
-                  </div>
-
                   <div class="form-group row">
-                      <div class="col-md-6">
-                          <label for="fposition" class="form-label mt-4">Position</label>
-                          <input type="text" name="fposition" class="form-control" id="fposition" placeholder="" required>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>
+                        <input type="email" name="femail" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" required>
                       </div>
 
                       <div class="col-md-6">
