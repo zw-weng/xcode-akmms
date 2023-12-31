@@ -1,10 +1,4 @@
 <?php
-include('mysession.php');
-  if(!session_id())
-  {
-    session_start();
-  }
-
 // Include database connection
 include ('dbconnect.php');
 
@@ -30,5 +24,8 @@ function alertMessage(){
 		unset($_SESSION['status']);
 	}
 }
+
+//Close DB Conncetion
+mysqli_close($con);
 
 ?>
