@@ -25,7 +25,4 @@ function alertMessage(){
 	}
 }
 
-//Close DB Conncetion
-mysqli_close($con);
-
 ?>
