@@ -286,37 +286,44 @@ include('function.php');
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-cart"></i><span>Order</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-box"></i><span>Quotation</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="quotation-advertising.php">
-              <i class="bi bi-circle"></i><span>Quotation (Advertising)</span>
+              <i class="bi bi-circle"></i><span>Advertising</span>
             </a>
           </li>
-            <li>
+          <li>
             <a href="quotation-construction.php">
-              <i class="bi bi-circle"></i><span>Quotation (Construction)</span>
-            </a>
-          </li>
-          <li>
-            <a href="components-accordion.html">
-              <i class="bi bi-circle"></i><span>Sales Order</span>
-            </a>
-          </li>
-          <li>
-            <a href="deliveryorderlist.php">
-              <i class="bi bi-circle"></i><span>Delivery Order</span>
-            </a>
-          </li>
-          <li>
-            <a href="invoicelist.php">
-              <i class="bi bi-circle"></i><span>Invoice</span>
+              <i class="bi bi-circle"></i><span>Construction</span>
             </a>
           </li>
         </ul>
-      </li><!-- End Components Nav -->
+      </li><!-- End Quotation Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="phphphph">
+          <i class="bi bi-person-badge"></i>
+          <span>Sales Order</span>
+        </a>
+      </li><!-- End Sales Order Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="users-profile.html">
+          <i class="bi bi-person-badge"></i>
+          <span>Delivery Order</span>
+        </a>
+      </li><!-- End Delivery Order Nav -->
+
+       <li class="nav-item">
+        <a class="nav-link collapsed" href="invoicegenerate.php">
+          <i class="bi bi-person-badge"></i>
+          <span>Invoice</span>
+        </a>
+      </li><!-- End Invoice Nav -->
+
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -334,7 +341,7 @@ include('function.php');
             </a>
           </li>
         </ul>
-      </li><!-- End Forms Nav -->
+      </li><!-- End Inventory Nav -->
 
        <li class="nav-item">
         <a class="nav-link collapsed" href="users-profile.html">
