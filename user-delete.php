@@ -1,5 +1,6 @@
 <?php
-// Connect to DB
+// Includes neccessary files
+include('mysession.php');
 include('dbconnect.php');
 include('function.php');
 
