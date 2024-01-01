@@ -83,6 +83,7 @@
                     <th>Phone No.</th>
                     <th>Email</th>
                     <th>User Type</th>
+                    <th> </th>
                   </tr>
                 </thead>
                 <tbody>
