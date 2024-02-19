@@ -1,5 +1,43 @@
 <?php
+include('mysession.php');
+if (!session_id()) {
+  session_start();
+}
+
+// Include files
+include('dbconnect.php');
 include('function.php');
+
+$suid = $_SESSION['suid'];
+$userName = getUserName($con, $suid);
+$userType = getUserType($con, $suid);
+
+// Check if $_SESSION['alert'] is set
+if (isset($_SESSION['alert'])) {
+    $alert = $_SESSION['alert'];
+    $alertCount = getAlertCount($con, $alert);
+} else {
+    // Retrieve the alert from the database if not set
+    $sqlr = "SELECT min_value FROM tb_alert";
+    $resultr = mysqli_query($con, $sqlr);
+
+    if ($resultr) {
+        $row = mysqli_fetch_assoc($resultr);
+        $alert = $row['min_value'];
+
+        // Store the value in a session variable
+        $_SESSION['alert'] = $alert;
+        $alertCount = getAlertCount($con, $alert);
+    } else {
+        // Handle the error or set a default value
+        echo "Error: " . mysqli_error($con);
+        $_SESSION['alert'] = 0; // Set a default value
+        $alertCount = 0;
+    }
+}
+
+// Close DB Connection
+mysqli_close($con);
 ?>
 
 <!DOCTYPE html>
@@ -14,8 +52,11 @@ include('function.php');
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link rel="icon" href="assets/img/akmaju.png" sizes="16x16" type="image/png">
+  <link rel="icon" href="assets/img/akmaju.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="assets/img/akmaju.png" sizes="48x48" type="image/png">
+  <link rel="icon" href="assets/img/akmaju.png" sizes="64x64" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/akmaju.png" sizes="180x180">
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -40,6 +81,16 @@ include('function.php');
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+    body {
+      background-color: #f6f6f6;
+      /* A bit gray-light background color */
+      color: #444444;
+      /* Dark text color */
+    }
+
+    /* You can keep the existing styles for the header without modification */
+  </style>
 </head>
 
 <body>
@@ -48,9 +99,9 @@ include('function.php');
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="adminmain.php" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="d-none d-lg-block">AKMajuResources</span>
+      <a href="adminmain.php" class="logo d-flex align-items-center w-auto">
+        <img src="assets/img/akmaju.png" alt="AK Maju logo" style="max-width: 140px; max-height: 40px;">
+        <span class="d-none d-lg-block">AK Maju Resources</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -71,165 +122,32 @@ include('function.php');
           </a>
         </li><!-- End Search Icon-->
 
-        <li class="nav-item dropdown">
+        <li>
 
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+          <a class="nav-link nav-icon" href="alert.php">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
+            <?php if ($alertCount > 0) : ?>
+              <span class="badge bg-danger badge-number"><?= $alertCount; ?></span>
+            <?php endif; ?>
           </a><!-- End Notification Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
-              <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Atque rerum nesciunt</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>1 hr. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-check-circle text-success"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-info-circle text-primary"></i>
-              <div>
-                <h4>Dicta reprehenderit</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>4 hrs. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
-            </li>
-
-          </ul><!-- End Notification Dropdown Items -->
 
         </li><!-- End Notification Nav -->
 
-        <li class="nav-item dropdown">
-
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-chat-left-text"></i>
-            <span class="badge bg-success badge-number">3</span>
-          </a><!-- End Messages Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-            <li class="dropdown-header">
-              You have 3 new messages
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>Maria Hudson</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>4 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>Anna Nelson</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>6 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="message-item">
-              <a href="#">
-                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
-                <div>
-                  <h4>David Muldon</h4>
-                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                  <p>8 hrs. ago</p>
-                </div>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="dropdown-footer">
-              <a href="#">Show all messages</a>
-            </li>
-
-          </ul><!-- End Messages Dropdown Items -->
-
-        </li><!-- End Messages Nav -->
-
         <li class="nav-item dropdown pe-3">
-
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+          <img src="assets/img/admin.png" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">Hi, <?= $userName; ?></span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+          <li class="dropdown-header">
+              <h6><?= $userType; ?></h6>
             </li>
             <li>
               <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+            </li>  
+          <li>
+              <a class="dropdown-item d-flex align-items-center" href="user-profile.php">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -239,27 +157,7 @@ include('function.php');
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-gear"></i>
-                <span>Account Settings</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="logout.php">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -279,71 +177,74 @@ include('function.php');
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="adminmain.php">
+        <a class="nav-link" href="adminmain.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-cart"></i><span>Order</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" href="quote.php">
+          <i class="bi bi-chat-quote-fill"></i>
+          <span>Quotation</span>
         </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="quotation-advertising.php">
-              <i class="bi bi-circle"></i><span>Quotation (Advertising)</span>
-            </a>
-          </li>
-            <li>
-            <a href="quotation-construction.php">
-              <i class="bi bi-circle"></i><span>Quotation (Construction)</span>
-            </a>
-          </li>
-          <li>
-            <a href="components-accordion.html">
-              <i class="bi bi-circle"></i><span>Sales Order</span>
-            </a>
-          </li>
-          <li>
-            <a href="deliveryorderlist.php">
-              <i class="bi bi-circle"></i><span>Delivery Order</span>
-            </a>
-          </li>
-          <li>
-            <a href="invoicelist.php">
-              <i class="bi bi-circle"></i><span>Invoice</span>
-            </a>
-          </li>
-        </ul>
-      </li><!-- End Components Nav -->
+      </li><!-- End Quotation Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link collapsed" href="order.php">
+          <i class="bi bi-cart"></i>
+          <span>Sales Order</span>
+        </a>
+      </li><!-- End Sales Order Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="payment.php">
+          <i class="bi bi-credit-card"></i>
+          <span>Payment</span>
+        </a>
+      </li><!-- End Payment Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="deliveryorderlist.php">
+          <i class="bi bi-truck"></i>
+          <span>Delivery Order</span>
+        </a>
+      </li><!-- End Delivery Order Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="invoicelist.php">
+          <i class="bi bi-file-text"></i>
+          <span>Invoice</span>
+        </a>
+      </li><!-- End Invoice Nav -->
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#inventory-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-box"></i><span>Inventory</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="inventory-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="forms-elements.html">
+            <a href="stock.php">
               <i class="bi bi-circle"></i><span>Stock</span>
             </a>
           </li>
           <li>
-            <a href="forms-layouts.html">
+            <a href="jkr.php">
               <i class="bi bi-circle"></i><span>JKR Material</span>
             </a>
           </li>
         </ul>
-      </li><!-- End Forms Nav -->
+      </li><!-- End Inventory Nav -->
 
-       <li class="nav-item">
-        <a class="nav-link collapsed" href="users-profile.html">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="customer1.php">
           <i class="bi bi-person-badge"></i>
           <span>Customers Info</span>
         </a>
       </li><!-- End Customers Info Page Nav -->
 
-        <li class="nav-item">
+      <li class="nav-item">
         <a class="nav-link collapsed" href="user.php">
           <i class="bi bi-people"></i>
           <span>User Management</span>
@@ -353,7 +254,7 @@ include('function.php');
       <li class="nav-heading">SETTING</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="users-profile.html">
+        <a class="nav-link collapsed" href="user-profile.php">
           <i class="bi bi-person"></i>
           <span>Profile</span>
         </a>

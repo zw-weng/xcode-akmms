@@ -1,49 +1,70 @@
-<?php
-session_start();
-
-//Connect to DB
-include('dbconnect.php');
-
-//Retrieve data from login form
-$fid = $_POST['fid'];
-$fpwd = $_POST['fpwd'];
-
-//CRUD Operations
-//RETRIEVE - SQL retrieve statement
-$sql = "SELECT * FROM tb_user WHERE user_id=?";
-
-// Use prepared statements to prevent SQL injection
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, "s", $fid);
-mysqli_stmt_execute($stmt);
-
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
-
-// Check if user exists and password is correct
-if ($row && password_verify($fpwd, $row['user_pwd'])) {
-    $_SESSION['user_id'] = session_id();
-    $_SESSION['suid'] = $fid;
-
-    // User available
-    if ($row['type_id'] == '1') //Staff
-    {
-        $_SESSION['notification'] = 'Welcome, staff member!';
-        header('Location: staffmain.php');
-    } else {
-        $_SESSION['notification'] = 'Welcome, administrator!';
-        header('Location: adminmain.php');
-    }
-} else {
-    // Data not available/exist
-    // Add script to let the user know either username or pwd wrong
-    $_SESSION['error'] = 'Username or password is incorrect. Please try again.';
-    header('Location: login.php');
-}
-
-// Close the statement
-mysqli_stmt_close($stmt);
-
-// Close DB Connection
-mysqli_close($con);
+<?php
+session_start();
+
+// Connect to DB
+include('dbconnect.php');
+include('function.php');
+
+if (isset($_POST['loginBtn'])) {
+    $fid = validate($_POST['fid']);
+    $fpwd = validate($_POST['fpwd']);
+
+    $fid = filter_var($fid, FILTER_SANITIZE_STRING);
+    $fpwd = filter_var($fpwd, FILTER_SANITIZE_STRING);
+
+    if ($fid != '' && $fpwd != '') {
+        // Use prepared statement to prevent SQL injection
+        $sql = "SELECT * FROM tb_user WHERE user_id=? LIMIT 1";
+        $stmt = mysqli_prepare($con, $sql);
+
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "s", $fid);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if ($result) {
+                if (mysqli_num_rows($result) == 1) {
+                    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                    $hashedPassword = $row['user_pwd'];
+
+                    // Use password_verify to check the hashed password
+                    if (!password_verify($fpwd, $hashedPassword)) {
+                        redirect('index.php', 'Authentication failed. If you continue to experience issues, contact support.');
+                    }
+
+                    // Check acc_status
+                    if ($row['acc_status'] == 1) {
+                        $_SESSION['user_id'] = session_id();
+                        $_SESSION['suid'] = $fid;
+
+                        // User available
+                        if ($row['type_id'] == '1') {
+                            // Staff
+                            header('Location:staffmain.php');
+                        } else {
+                            // Admin
+                            header('Location:adminmain.php');
+                        }
+                    } else {
+                        // Account is not active
+                        redirect('index.php', 'Your account is not active. Please contact the administrator.');
+                    }
+                } else {
+                    redirect('index.php', 'Authentication failed. If you continue to experience issues, contact support.');
+                }
+            } else {
+                redirect('index.php', 'Something went wrong.');
+            }
+
+            mysqli_stmt_close($stmt);
+        } else {
+            redirect('index.php', 'Something went wrong.');
+        }
+    } else {
+        redirect('index.php', 'All fields are mandatory.');
+    }
+
+    // Close DB Connection
+    mysqli_close($con);
+}
 ?>

@@ -1,115 +1,127 @@
-<?php include 'headeradmin.php'; ?>
-<?php include 'dbconnect.php'; ?>
-
-<main id="main" class="main">
-
-    <div class="pagetitle">
-        <h1>Invoice</h1>
-        <div class="d-flex justify-content-between align-items-center">
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="adminmain.php">Home</a></li>
-                    <li class="breadcrumb-item active">Invoice</li>
-                </ol>
-            </nav>
-
-            <div class="btn-group me-2">
-                <!-- Changed the structure of the button -->
-                <a href="invoicepreview.php" class="btn btn-success"><i class="bi bi-filetype-pdf"></i> Generate</a>
-            </div>
-        </div>
-    </div><!-- End Page Title -->
-
-    <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Invoice Details</h5>
-
-                        <div class="table-responsive">
-                            <form method="post" action="invoiceupdate.php">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Order ID</th>
-                                            <th>Quotation ID</th>
-                                            <!-- Removed 'cust_id' as it was not selected in the query -->
-                                            <th>Client Name</th>
-                                            <th>Client Street</th>
-                                            <th>Client Postcode</th>
-                                            <th>Client City</th>
-                                            <th>Client State</th>
-                                            <th>Client Country</th>
-                                            <th>Product Price</th>
-                                            <th>Product Description</th>
-                                            <th>Quantity</th>
-                                            <th>Total</th>
-                                            <th>Grand Total</th>
-                                            <th>Quotation Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $query = "
-                                            SELECT
-                                                so.order_id,
-                                                q.quotation_id,
-                                                q.client_name,
-                                                q.client_street,
-                                                q.client_postcode,
-                                                q.client_city,
-                                                q.client_state,
-                                                q.client_country,
-                                                q.product_price,
-                                                q.product_desc,
-                                                q.quantity,
-                                                q.total,
-                                                q.grand_total,
-                                                q.quotation_date
-                                            FROM
-                                                tb_salesorder so
-                                            JOIN
-                                                tb_quotation q ON so.quotation_id = q.quotation_id
-                                        ";
-
-                                        $result = mysqli_query($con, $query);
-
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo "<tr>";
-                                            echo "<td>{$row['order_id']}</td>";
-                                            echo "<td>{$row['quotation_id']}</td>";
-                                            // Updated to use 'client_name' instead of 'cust_id'
-                                            echo "<td><input type='text' name='client_name' value='{$row['client_name']}'></td>";
-                                            echo "<td><input type='text' name='client_street' value='{$row['client_street']}'></td>";
-                                            echo "<td><input type='text' name='client_postcode' value='{$row['client_postcode']}'></td>";
-                                            echo "<td><input type='text' name='client_city' value='{$row['client_city']}'></td>";
-                                            echo "<td><input type='text' name='client_state' value='{$row['client_state']}'></td>";
-                                            echo "<td><input type='text' name='client_country' value='{$row['client_country']}'></td>";
-                                            echo "<td><input type='text' name='product_price' value='{$row['product_price']}'></td>";
-                                            echo "<td><input type='text' name='product_desc' value='{$row['product_desc']}'></td>";
-                                            echo "<td><input type='text' name='quantity' value='{$row['quantity']}'></td>";
-                                            echo "<td>{$row['total']}</td>";
-                                            echo "<td>{$row['grand_total']}</td>";
-                                            echo "<td>{$row['quotation_date']}</td>";
-                                            echo "<td><button type='submit' name='update_btn'>Update</button></td>";
-                                            echo "</tr>";
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-</main><!-- End #main -->
-
+<?php include('mysession.php');
+if (!session_id()) {
+    session_start();
+}
+include 'headeradmin.php';
+include 'dbconnect.php';
+
+if (isset($_GET['quotation_id'])) {
+    $quotation_id = $_GET['quotation_id'];
+} else {
+    // Handle the case where no quotation_id is provided
+    echo "No quotation_id provided";
+    exit();
+} ?>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Invoice</h1>
+        <div class="d-flex justify-content-between align-items-center">
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="adminmain.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="invoicelist.php">Invoice</a></li>
+                    <li class="breadcrumb-item active">Generate Invoice</li>
+                </ol>
+            </nav>
+            <div class="btn-group me-2">
+                <!-- Changed the structure of the button -->
+                <a href="invoicelist.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Invoice Details</h5>
+                        <div class="table-responsive">
+                            <form method="post" action="DOgenerate.php">
+                                <?php
+                                $query = "SELECT tb_deliveryorder.delivery_id, tb_quotation.cust_id, tb_customer.cust_name, CONCAT(tb_customer.cust_street, ', ', tb_customer.cust_postcode, ', ', tb_customer.cust_city, ', ', tb_customer.cust_state, ', ', tb_customer.cust_country) AS customer_address, tb_paymentterm.payment_term_desc, tb_product.product_id, tb_product.product_name, tb_product.product_qty, tb_invoice.invoice_id
+FROM tb_deliveryorder 
+JOIN tb_quotation ON tb_deliveryorder.quotation_id = tb_quotation.quotation_id
+JOIN tb_customer ON tb_quotation.cust_id = tb_customer.cust_id
+JOIN tb_product ON tb_quotation.quotation_id = tb_product.quotation_id
+JOIN tb_paymentterm ON tb_quotation.payment_term_id = tb_paymentterm.payment_term_id
+JOIN tb_invoice ON tb_quotation.quotation_id = tb_invoice.quotation_id
+WHERE tb_deliveryorder.quotation_id = $quotation_id
+GROUP BY tb_deliveryorder.quotation_id";
+                                $result = mysqli_query($con, $query);
+                                $row = mysqli_fetch_assoc($result); // Assuming there's only one matching record
+
+
+                                echo "<label for='invoice_id' class='form-label'>Invoice ID</label>";
+                                echo "<input type='text' class='form-control' id='invoice_id' value='{$row['invoice_id']}' disabled><br>";
+                                echo "<label for='cust_id' class='form-label'>Customer Name</label>";
+                                echo "<input type='text' class='form-control' id='cust_id' value='{$row['cust_name']}' disabled><br>";
+
+                                echo "<label for='customer_address' class='form-label'>Customer Address</label>";
+                                echo "<input type='text' class='form-control' id='customer_address' value='{$row['customer_address']}' disabled><br>";
+
+                                echo "<label for='payment_term_desc' class='form-label'>Payment Term</label>";
+                                echo "<input type='text' class='form-control' id='payment_term_desc' value='{$row['payment_term_desc']}' disabled><br>";
+
+                                echo "<table class='table table-hover'>";
+                                echo "<thead>";
+                                echo "<tr>";
+                                echo "<th>Product ID</th>";
+                                echo "<th>Product Description</th>";
+                                echo "<th>Product Quantity</th>";
+                                echo "<th>Product Price</th>";
+                                echo "<th>Product Subtotal</th>";
+                                echo "<th>Tax Code</th>";
+                                echo "<th>Tax Amount</th>";
+                                echo "</tr>";
+                                echo "</thead>";
+                                echo "<tbody>";
+
+                                $query = "SELECT tb_product.product_id, tb_product.product_name, tb_product.product_qty,tb_product.product_price,tb_product.product_subtotal,tb_product.tax_code,tb_product.tax_amount
+FROM tb_deliveryorder 
+JOIN tb_quotation ON tb_deliveryorder.quotation_id = tb_quotation.quotation_id
+JOIN tb_product ON tb_quotation.quotation_id = tb_product.quotation_id
+WHERE tb_deliveryorder.quotation_id = $quotation_id";
+
+                                $result = mysqli_query($con, $query);
+
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>";
+                                    echo "<td>{$row['product_id']}</td>";
+                                    echo "<td>{$row['product_name']}</td>";
+                                    echo "<td>{$row['product_qty']}</td>";
+                                    echo "<td>{$row['product_price']}</td>";
+                                    echo "<td>{$row['product_subtotal']}</td>";
+                                    echo "<td>{$row['tax_code']}</td>";
+                                    echo "<td>{$row['tax_amount']}</td>";
+                                    echo "</tr>";
+                                }
+
+                                echo "</tbody>";
+                                echo "</table>";
+
+                                echo "<div class='d-flex justify-content-center'>";
+                                echo "<td><a href=\"invoicepreview.php?quotation_id={$quotation_id}\" class=\"btn btn-primary\"><i class=\"bi bi-filetype-pdf\"></i> Generate Invoice</a></td>";
+                                echo "</div>";
+                                echo "</form>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>";
+
+                                mysqli_close($con); // Use $con instead of $connection
+                                ?>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
 <?php include 'footer.php'; ?>
